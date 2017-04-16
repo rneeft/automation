@@ -76,9 +76,8 @@ Describe "Write-Succeed"{
 
         Assert-VerifiableMocks
     }
-    #Making a failing test to test my build server
-    It "Writes it in the colour Red"{
-        Mock Write-Host {} -Verifiable -ParameterFilter {$ForegroundColor -eq "Red"}
+    It "Writes it in the colour Green"{
+        Mock Write-Host {} -Verifiable -ParameterFilter {$ForegroundColor -eq "Green"}
 
          Write-Succeed
 
