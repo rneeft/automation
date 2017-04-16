@@ -1,4 +1,3 @@
-
 function Get-DbUp {
 	<#
 	.SYNOPSIS
@@ -6,12 +5,12 @@ function Get-DbUp {
 	.DESCRIPTION
 	The Get-DbUp function downloads and extract a DbUp package specified URL. It is extracted to the local temp directory. The location of the DbUp.dll is returned. 
 	.PARAMETER url
-	URL that contains the location of the online DbUp zip/nupkg file. Default: https://www.nuget.org/api/v2/package/dbup/3.3.5
+	URL that contains the location of the online DbUp zip/nupkg file. Default: https://www.nuget.org/api/v2/package/dbup/
 	.OUTPUTS 
 	System.string containing the location of the DbUp.dll binary
 	.EXAMPLE
 	Get-DbUp
-	Downloads the package https://www.nuget.org/api/v2/package/dbup/3.3.5 and returns the location of the DbUp.dll location
+	Downloads the package https://www.nuget.org/api/v2/package/dbup/ and returns the location of the DbUp.dll location
 	.EXAMPLE
 	Get-DbUp -URL https://custom.location.com/package/myDbUp/1.0.0
 	Downloads the package from the custom location
@@ -22,39 +21,56 @@ function Get-DbUp {
 	[CmdletBinding()]
 	param
 	(
-		$Url="https://www.nuget.org/api/v2/package/dbup/3.3.5"
+		$Url="https://www.nuget.org/api/v2/package/dbup/"
 	)
 
 	$dbUpTempPath ="$env:TEMP\dbup"
 	$dbUpZipLocation = "$env:TEMP\DbUp.zip"
 
 	try{
-		Write-Host "Deleting old packages... " -NoNewline
+		Write-Status "Deleting old packages... "
 		Remove-Item $dbUpZipLocation -Force -ErrorAction SilentlyContinue
 		Remove-Item $dbUpTempPath -Force -Recurse -ErrorAction SilentlyContinue
-		Write-Host "[Succeed]" -ForegroundColor Green
+		Write-Succeed
 
-		Write-Host "Downloading package... " -NoNewline
-		Invoke-WebRequest $Url -OutFile $dbUpZipLocation
-		Write-Host "[Succeed]" -ForegroundColor Green
-
-		Write-Host "Expand archive... " -NoNewline
+		Write-Status "Downloading package... "
+		Invoke-WebRequest $url -OutFile $dbUpZipLocation
+		Write-Succeed
+		
+		Write-Status "Expand archive... " 
 		Expand-Archive $dbUpZipLocation -DestinationPath $dbUpTempPath
-		Write-Host "[Succeed]" -ForegroundColor Green
+		Write-Succeed
 
-		Write-Host "Locating DbUp... " -NoNewline
+		Write-Status "Locating DbUp... "
 		$dbupPath = Get-ChildItem -Path $dbUpTempPath -Filter "DbUp.dll" -Recurse -ErrorAction SilentlyContinue -Force |
-					Select-Object -First 1 | 
+					Select-Object -First 1  | 
 					ForEach-Object { $_.FullName }
 		if (!$dbupPath) {
 			throw [System.IO.FileNotFoundException] "DbUp.dll location cannot be found"
 		}
-
-		Write-Host "[Succeed]" -ForegroundColor Green 
-		return $dbupPath
+		Write-Succeed
+		
+		return $dbupPath;
 	}
 	Catch {
-		Write-Host "[Failed]" -ForegroundColor Red
+		Write-Fail
 		throw
 	}
+}
+
+function Write-Status{
+	[cmdletbinding()]
+	param (
+		[Parameter(Mandatory=$true)]
+		[Object]$message
+	)
+	Write-Host "$message... " -NoNewline
+}
+
+function Write-Succeed{
+	Write-Host "[Succeed]" -ForegroundColor Green
+}
+
+function Write-Fail{
+	Write-Host "[Fail]" -ForegroundColor Red
 }
