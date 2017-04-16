@@ -2,6 +2,20 @@
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 . "$here\$sut"
 
+
+Describe "Test-SQLConnectionString"{
+    It "Returns False when connection string is incorrect"{
+        $connectionString = "server=(localdb)\mssqllocaldb;database=master;Trusted_Connection=Yes;Connection Timeout=120;"
+
+        Test-SQLConnectionString $connectionString | Should Be $true
+    }
+    It "Returns True when connection string is correct"{
+        $connectionString = "blah"
+        
+        Test-SQLConnectionString $connectionString | Should Be $false
+    }
+}
+
 Describe "Get-DbUp" {
     Mock Write-Status {}
     Mock Write-Succeed {}

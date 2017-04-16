@@ -1,3 +1,28 @@
+function Test-SQLConnectionString{    
+	<#
+	.LINK
+	Source of this method: http://stackoverflow.com/questions/29229109/test-database-connectivity [Martin Brandl]
+	#>
+    [CmdletBinding()]
+    Param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        $ConnectionString
+    )
+    try
+    {
+        $sqlConnection = New-Object System.Data.SqlClient.SqlConnection $ConnectionString;
+        $sqlConnection.Open();
+        $sqlConnection.Close();
+
+        return $true;
+    }
+    catch
+    {
+        return $false;
+    }
+}
+
 function Get-DbUp {
 	<#
 	.SYNOPSIS
