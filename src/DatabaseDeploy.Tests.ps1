@@ -2,6 +2,40 @@
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 . "$here\$sut"
 
+Describe "Publish-DbUpScripts"{
+    Mock Write-Status {}
+    Mock Write-Succeed {}
+
+    Context "Wrong paramters"{
+        It "Throws exception when connection string is empty" {
+            Mock Test-SQLConnectionString {return $false}
+            { Publish-DbUpScripts -ConnectionString "blah" "C:\dbup.dll" -DbScripts "C:\db\" } | Should Throw
+        }
+        It "Throws exception when DbUp Path not exist" {
+            Mock Test-SQLConnectionString { return $true}
+            Mock Test-DbUplocation  { return $false }
+            { Publish-DbUpScripts -ConnectionString "blah" -DbUpPath "C:\dbup.dll" -DbScripts "C:\db\" } | Should Throw "DbUp.dll location cannot be found"
+        }
+        It "Throws exception when Scripts Path does not exists" {
+            Mock Test-SQLConnectionString { return $true}
+            Mock Test-DbUplocation  { return $true }
+            Mock Test-DbScriptsPath { return $false } 
+            { Publish-DbUpScripts -ConnectionString "blah" -DbUpPath "C:\dbup.dll"  -DbScripts "C:\db\" } | Should Throw "Scripts path cannot be found"
+        }
+
+    }
+}
+
+Describe "Test-DbScriptPath"{
+    It "Returns False when directory does not contains SQL scripts"{
+        New-Item "db" -ItemType Directory -Force
+        Test-DbScriptsPath "db" | Should Be $false
+        Remove-Item "db"
+    }
+    It "Returns False when path does not exist"{
+        Test-DbScriptsPath "db" | Should Be $false
+    }
+}
 
 Describe "Test-SQLConnectionString"{
     It "Returns False when connection string is incorrect"{

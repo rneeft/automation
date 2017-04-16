@@ -1,26 +1,55 @@
-function Test-SQLConnectionString{    
-	<#
-	.LINK
-	Source of this method: http://stackoverflow.com/questions/29229109/test-database-connectivity [Martin Brandl]
-	#>
-    [CmdletBinding()]
-    Param
-    (
-        [Parameter(Mandatory=$true, Position=0)]
-        $ConnectionString
-    )
-    try
-    {
-        $sqlConnection = New-Object System.Data.SqlClient.SqlConnection $ConnectionString;
-        $sqlConnection.Open();
-        $sqlConnection.Close();
 
-        return $true;
-    }
-    catch
-    {
-        return $false;
-    }
+function Publish-DbUpScripts {
+	<#
+	.SYNOPSIS
+	Publish the scripts to the Database
+	.DESCRIPTION
+	#>
+	[CmdletBinding()]
+	param
+	(
+		[Parameter(Mandatory=$true)]
+		$ConnectionString,
+		[Parameter(Mandatory=$true)]
+		$DbUpPath,
+		[Parameter(Mandatory=$true)]
+		$DbScripts
+	)
+	If (!(Test-SQLConnectionString($ConnectionString))) {
+		throw "ConnectionString wrongly formatted";
+	}
+	if (!(Test-DbUplocation($DbUpPath))) {
+		throw [System.IO.FileNotFoundException] "DbUp.dll location cannot be found"
+	}
+	if (!(Test-DbScriptsPath($DbScripts))) {
+		throw [System.IO.FileNotFoundException] "Scripts path cannot be found"
+	}
+
+# Add-Type -Path $DbUpPath
+
+# $dbUp = [DbUp.DeployChanges]::To
+# $dbUp = [SqlServerExtensions]::SqlDatabase($dbUp, $ConnectionString)
+# $dbUp = [StandardExtensions]::WithScriptsFromFileSystem($dbUp, $scriptPath)
+# $dbUp = [SqlServerExtensions]::JournalToSqlTable($dbUp, 'dbo', 'SchemaVersions')
+# $dbUp = [StandardExtensions]::LogToConsole($dbUp)
+
+}
+
+function Start-DbUp($dbUp){
+	return = $dbUp.Build().PerformUpgrade()
+}
+
+function Test-DbUplocation($location){
+	return Test-Path $location
+}
+
+function Test-DbScriptsPath($location){
+	if (!(Test-Path $location)){
+		return $false;
+	}
+
+ 	$items = Get-ChildItem -Path $location -Filter "*.sql" | Measure-Object
+	return !($items.Count -eq 0)
 }
 
 function Get-DbUp {
@@ -98,4 +127,29 @@ function Write-Succeed{
 
 function Write-Fail{
 	Write-Host "[Fail]" -ForegroundColor Red
+}
+
+function Test-SQLConnectionString{    
+	<#
+	.LINK
+	Source of this method: http://stackoverflow.com/questions/29229109/test-database-connectivity [Martin Brandl]
+	#>
+    [CmdletBinding()]
+    Param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        $ConnectionString
+    )
+    try
+    {
+        $sqlConnection = New-Object System.Data.SqlClient.SqlConnection $ConnectionString;
+        $sqlConnection.Open();
+        $sqlConnection.Close();
+
+        return $true;
+    }
+    catch
+    {
+        return $false;
+    }
 }
