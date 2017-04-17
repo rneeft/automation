@@ -4,6 +4,20 @@ function Publish-DbUpScripts {
 	.SYNOPSIS
 	Publish the scripts to the Database
 	.DESCRIPTION
+	.PARAMETER ConnectionString
+	SQL Connection String pointing to a existing database
+	.PARAMETER DbUpPath
+	Path pointing to the location of the DbUp.dll binary
+	.PARAMETER DbScripts
+	Path pointing oo the location of the SQL scripts. The folder must contain SQL scripts
+	.EXAMPLE
+	Publish-DbUpScripts -ConnectionString "Server=(localdb)\\mssqllocaldb;Database=Test" -DbUpPath "lib\dbup.dll" -DbScripts "\sql\"
+	Publish the scripts in folder sql\ to the specified connection string.	
+	.LINK
+	DbUp docs: https://dbup.readthedocs.io/
+	Questions about this script: rick@chroomsoft.nl
+	.LINK
+	Get-DbUp
 	#>
 	[CmdletBinding()]
 	param
@@ -36,22 +50,6 @@ function Publish-DbUpScripts {
 	Start-DbUp($dbUp);
 }
 
-function Start-DbUp($dbUp){
-	return $dbUp.Build().PerformUpgrade()
-}
-
-function Test-DbUplocation($location){
-	return Test-Path $location
-}
-
-function Test-DbScriptsPath($location){
-	if (!(Test-Path $location)){
-		return $false;
-	}
-
- 	$items = Get-ChildItem -Path $location -Filter "*.sql" | Measure-Object
-	return !($items.Count -eq 0)
-}
 
 function Get-DbUp {
 	<#
@@ -153,4 +151,22 @@ function Test-SQLConnectionString{
     {
         return $false;
     }
+}
+
+
+function Start-DbUp($dbUp){
+	return $dbUp.Build().PerformUpgrade()
+}
+
+function Test-DbUplocation($location){
+	return Test-Path $location
+}
+
+function Test-DbScriptsPath($location){
+	if (!(Test-Path $location)){
+		return $false;
+	}
+
+ 	$items = Get-ChildItem -Path $location -Filter "*.sql" | Measure-Object
+	return !($items.Count -eq 0)
 }
