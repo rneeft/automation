@@ -22,21 +22,22 @@ function Publish-DbUpScripts {
 		throw [System.IO.FileNotFoundException] "DbUp.dll location cannot be found"
 	}
 	if (!(Test-DbScriptsPath($DbScripts))) {
-		throw [System.IO.FileNotFoundException] "Scripts path cannot be found"
+		throw [System.IO.FileNotFoundException] "Scripts path cannot be found or does not contain sql scripts"
 	}
 
-# Add-Type -Path $DbUpPath
+	Add-Type -Path $DbUpPath
 
-# $dbUp = [DbUp.DeployChanges]::To
-# $dbUp = [SqlServerExtensions]::SqlDatabase($dbUp, $ConnectionString)
-# $dbUp = [StandardExtensions]::WithScriptsFromFileSystem($dbUp, $scriptPath)
-# $dbUp = [SqlServerExtensions]::JournalToSqlTable($dbUp, 'dbo', 'SchemaVersions')
-# $dbUp = [StandardExtensions]::LogToConsole($dbUp)
+	$dbUp = [DbUp.DeployChanges]::To
+	$dbUp = [SqlServerExtensions]::SqlDatabase($dbUp, $ConnectionString)
+	$dbUp = [StandardExtensions]::WithScriptsFromFileSystem($dbUp, $scriptPath)
+	$dbUp = [SqlServerExtensions]::JournalToSqlTable($dbUp, 'dbo', 'SchemaVersions')
+	$dbUp = [StandardExtensions]::LogToConsole($dbUp)
 
+	Start-DbUp($dbUp);
 }
 
 function Start-DbUp($dbUp){
-	return = $dbUp.Build().PerformUpgrade()
+	return $dbUp.Build().PerformUpgrade()
 }
 
 function Test-DbUplocation($location){

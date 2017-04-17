@@ -2,30 +2,6 @@
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 . "$here\$sut"
 
-Describe "Publish-DbUpScripts"{
-    Mock Write-Status {}
-    Mock Write-Succeed {}
-
-    Context "Wrong paramters"{
-        It "Throws exception when connection string is empty" {
-            Mock Test-SQLConnectionString {return $false}
-            { Publish-DbUpScripts -ConnectionString "blah" "C:\dbup.dll" -DbScripts "C:\db\" } | Should Throw
-        }
-        It "Throws exception when DbUp Path not exist" {
-            Mock Test-SQLConnectionString { return $true}
-            Mock Test-DbUplocation  { return $false }
-            { Publish-DbUpScripts -ConnectionString "blah" -DbUpPath "C:\dbup.dll" -DbScripts "C:\db\" } | Should Throw "DbUp.dll location cannot be found"
-        }
-        It "Throws exception when Scripts Path does not exists" {
-            Mock Test-SQLConnectionString { return $true}
-            Mock Test-DbUplocation  { return $true }
-            Mock Test-DbScriptsPath { return $false } 
-            { Publish-DbUpScripts -ConnectionString "blah" -DbUpPath "C:\dbup.dll"  -DbScripts "C:\db\" } | Should Throw "Scripts path cannot be found"
-        }
-
-    }
-}
-
 Describe "Test-DbScriptPath"{
     It "Returns False when directory does not contains SQL scripts"{
         New-Item "db" -ItemType Directory -Force
@@ -146,5 +122,49 @@ Describe "Get-DbUp" {
          It "Shows the [Fail] message" {
              Assert-MockCalled Write-Fail  
          }
+    }
+}
+
+Describe "Publish-DbUpScripts"{
+    Mock Write-Status {}
+    Mock Write-Succeed {}
+
+    Context "Wrong paramters"{
+        It "Throws exception when connection string is empty" {
+            Mock Test-SQLConnectionString {return $false}
+            { Publish-DbUpScripts -ConnectionString "blah" "C:\dbup.dll" -DbScripts "C:\db\" } | Should Throw
+        }
+        It "Throws exception when DbUp Path not exist" {
+            Mock Test-SQLConnectionString { return $true}
+            Mock Test-DbUplocation  { return $false }
+            { Publish-DbUpScripts -ConnectionString "blah" -DbUpPath "C:\dbup.dll" -DbScripts "C:\db\" } | Should Throw "DbUp.dll location cannot be found"
+        }
+        It "Throws exception when Scripts Path does not exists" {
+            Mock Test-SQLConnectionString { return $true}
+            Mock Test-DbUplocation  { return $true }
+            Mock Test-DbScriptsPath { return $false } 
+            { Publish-DbUpScripts -ConnectionString "blah" -DbUpPath "C:\dbup.dll"  -DbScripts "C:\db\" } | Should Throw "Scripts path cannot be found or does not contain sql scripts"
+        }
+    }
+    
+    Context "Correct parameters"{
+        $dbUp = "$PSScriptRoot\DbUp.dll"
+        $connectionString = "Server=(localdb)\\mssqllocaldb;Database=Pester"
+        $dbScripts = "db"
+
+        Copy-Item ".\test\dbup.dll" -Destination $dbUp
+
+        Mock Start-DbUp
+        Mock Test-DbScriptsPath { return $true }
+        Mock Test-SQLConnectionString { return $true}
+
+        $result = Publish-DbUpScripts -ConnectionString $connectionString -DbUpPath $dbUp -DbScripts $dbScripts
+        
+        It "Create an dbup object and sends it to the builder" {
+            Assert-MockCalled Start-DbUp
+        }
+        It "Does not lock the DbUp binary"{
+           Remove-Item $dbUp
+        }
     }
 }
