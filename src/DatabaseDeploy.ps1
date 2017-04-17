@@ -4,6 +4,7 @@ function Publish-DbUpScripts {
 	.SYNOPSIS
 	Publish the scripts to the Database
 	.DESCRIPTION
+	Using DbUp to publish the scripts to database. DbUp keeps track of which scripts it needs to run.
 	.PARAMETER ConnectionString
 	SQL Connection String pointing to a existing database
 	.PARAMETER DbUpPath
