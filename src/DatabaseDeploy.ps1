@@ -1,3 +1,9 @@
+function New-Database {
+		[CmdletBinding()]
+    param(
+		$InstanceName = "mssqllocaldb"
+	)
+}
 
 function Publish-DbUpScripts {
 	<#
@@ -50,7 +56,6 @@ function Publish-DbUpScripts {
 
 	Start-DbUp($dbUp);
 }
-
 
 function Get-DbUp {
 	<#
@@ -112,6 +117,18 @@ function Get-DbUp {
 	}
 }
 
+function Get-InstancePipeName() {
+	[CmdletBinding()]
+    param(
+		$InstanceName = "mssqllocaldb"
+	)
+
+    sqllocaldb start $InstanceName | Out-Null
+	$instanceInfo = sqllocaldb info $InstanceName | Out-String
+	return (($instanceInfo).split(" ")[-1]).Trim()
+}
+ 
+
 function Write-Status{
 	[cmdletbinding()]
 	param (
@@ -153,7 +170,6 @@ function Test-SQLConnectionString{
         return $false;
     }
 }
-
 
 function Start-DbUp($dbUp){
 	return $dbUp.Build().PerformUpgrade()
