@@ -146,13 +146,13 @@ Describe "Publish-DbUpScripts"{
             { Publish-DbUpScripts -ConnectionString "blah" -DbUpPath "C:\dbup.dll"  -DbScripts "C:\db\" } | Should Throw "Scripts path cannot be found or does not contain sql scripts"
         }
     }
-    
+
     Context "Correct parameters"{
         $dbUp = "$PSScriptRoot\DbUp.dll"
         $connectionString = "Server=(localdb)\\mssqllocaldb;Database=Pester"
         $dbScripts = "db"
 
-        Copy-Item ".\test\dbup.dll" -Destination $dbUp
+        Copy-Item "$PSScriptRoot\..\test\dbup.dll" -Destination $dbUp
 
         Mock Start-DbUp
         Mock Test-DbScriptsPath { return $true }
