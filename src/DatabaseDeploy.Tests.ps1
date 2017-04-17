@@ -146,8 +146,10 @@ Describe "Publish-DbUpScripts"{
             { Publish-DbUpScripts -ConnectionString "blah" -DbUpPath "C:\dbup.dll"  -DbScripts "C:\db\" } | Should Throw "Scripts path cannot be found or does not contain sql scripts"
         }
     }
+}
+Describe "Publish-DBUpScript-WithAccess" -Tags "LocalAccess" {
 
-    Context "Correct parameters"{
+    Context "Correct parameters" {
         $dbUp = "$PSScriptRoot\DbUp.dll"
         $connectionString = "Server=(localdb)\\mssqllocaldb;Database=Pester"
         $dbScripts = "db"
