@@ -50,54 +50,6 @@ Describe "Test-SQLConnectionString"{
     }
 }
 
-Describe "Get-DbUp" {
-    Mock Write-Status {}
-    Mock Write-Succeed {}
-    
-    $dbUpTempPath ="$env:TEMP\dbup"
-	$dbUpZipLocation = "$env:TEMP\DbUp.zip"
-
-    Context "Get-DbUp is called with the default setting"{
-        Mock Invoke-WebRequest -ParameterFilter {$uri -eq "https://www.nuget.org/api/v2/package/dbup/", $OutFile -eq $zipLocation}
-
-        $result = Get-DbUp
-
-        It "Downloads the default location"{
-            Assert-VerifiableMocks
-        }
-
-        It "Returns the DbUp binary location" {
-            $result | Should Be "$env:TEMP\dbup\lib\NET35\dbup.dll"
-        }
-    }
-
-    Context "Get-DbUp is called with different url"{
-        $myUrl = "https://www.nuget.org/api/v2/package/dbup/1.0.8"
-        Mock Invoke-WebRequest -ParameterFilter {$uri -eq $myUrl, $OutFile -eq $zipLocation}
-
-        $result = Get-DbUp $myUrl
-
-        It "Donwloads the specified location"{
-            Assert-VerifiableMocks
-        }
-    }
-
-    Context "Get-DbUp is called with an invalid url" {
-        $myUrl = "https://www.google.com"
-        Mock Write-Fail {}
-        try {
-                $result = Get-DbUp $myUrl
-        }
-        catch {
-        }
-
-         It "Shows the [Fail] message" {
-             Assert-MockCalled Write-Fail  
-         }
-    }
-}
-
-
 Describe "Write-Status"{
     It "Writes the text without a new line"{
         Mock Write-Host -Verifiable -ParameterFilter {$NoNewline -eq $true}
@@ -147,5 +99,52 @@ Describe "Write-Fail"{
         Write-Fail
 
         Assert-VerifiableMocks
+    }
+}
+
+Describe "Get-DbUp" {
+    Mock Write-Status {}
+    Mock Write-Succeed {}
+    
+    $dbUpTempPath ="$env:TEMP\dbup"
+	$dbUpZipLocation = "$env:TEMP\DbUp.zip"
+
+    Context "Get-DbUp is called with the default setting"{
+        Mock Invoke-WebRequest -ParameterFilter {$uri -eq "https://www.nuget.org/api/v2/package/dbup/", $OutFile -eq $zipLocation}
+
+        $result = Get-DbUp
+
+        It "Downloads the default location"{
+            Assert-VerifiableMocks
+        }
+
+        It "Returns the DbUp binary location" {
+            $result | Should Be "$env:TEMP\dbup\lib\NET35\dbup.dll"
+        }
+    }
+
+    Context "Get-DbUp is called with different url"{
+        $myUrl = "https://www.nuget.org/api/v2/package/dbup/1.0.8"
+        Mock Invoke-WebRequest -ParameterFilter {$uri -eq $myUrl, $OutFile -eq $zipLocation}
+
+        $result = Get-DbUp $myUrl
+
+        It "Donwloads the specified location"{
+            Assert-VerifiableMocks
+        }
+    }
+
+    Context "Get-DbUp is called with an invalid url" {
+        $myUrl = "https://www.google.com"
+        Mock Write-Fail {}
+        try {
+                $result = Get-DbUp $myUrl
+        }
+        catch {
+        }
+
+         It "Shows the [Fail] message" {
+             Assert-MockCalled Write-Fail  
+         }
     }
 }
