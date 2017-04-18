@@ -2,6 +2,13 @@
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 . "$here\$sut"
 
+Describe "Get-InstancePipeName"{
+    It "Always returns a pipe connection string" {
+        $result = Get-InstancePipeName
+        $result | Should Not BeNullOrEmpty
+    }
+}
+
 Describe "Test-DbScriptPath"{
     It "Returns False when directory does not contains SQL scripts"{
         New-Item "db" -ItemType Directory -Force
@@ -154,7 +161,9 @@ Describe "Publish-DBUpScript-WithAccess" -Tags "LocalAccess" {
         $connectionString = "Server=(localdb)\\mssqllocaldb;Database=Pester"
         $dbScripts = "db"
 
-        Copy-Item "$PSScriptRoot\..\test\dbup.dll" -Destination $dbUp
+        if (!(Test-Path -Path $dbUp)) {
+            Copy-Item "$PSScriptRoot\..\test\dbup.dll" -Destination $dbUp
+        }
 
         Mock Start-DbUp
         Mock Test-DbScriptsPath { return $true }
@@ -165,8 +174,12 @@ Describe "Publish-DBUpScript-WithAccess" -Tags "LocalAccess" {
         It "Create an dbup object and sends it to the builder" {
             Assert-MockCalled Start-DbUp
         }
-        It "Does not lock the DbUp binary"{
-           Remove-Item $dbUp
-        }
+    }
+}
+
+Describe "Get-AllDatabases"{
+    It "Always returns a value"{
+        $result = Get-AllDatabases
+        $result | Should Not BeNullOrEmpty
     }
 }

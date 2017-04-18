@@ -3,6 +3,8 @@ function New-Database {
     param(
 		$InstanceName = "mssqllocaldb"
 	)
+
+	$
 }
 
 function Publish-DbUpScripts {
@@ -115,6 +117,18 @@ function Get-DbUp {
 		Write-Fail
 		throw
 	}
+}
+
+function Get-AllDatabases(){
+	[CmdletBinding()]
+    param(
+		$InstanceName = "mssqllocaldb"
+	)
+	$connectionString = Get-InstancePipeName $InstanceName
+
+	$databases = sqlcmd -E -S $connectionString -Q "sp_databases" | Out-String
+
+	return $databases;
 }
 
 function Get-InstancePipeName() {
