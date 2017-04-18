@@ -119,7 +119,21 @@ function Get-DbUp {
 	}
 }
 
+function Test-Database() {
+	[CmdletBinding()]
+    param(
+		[Parameter(Mandatory=$true)]
+		$DatabaseName,
+		$InstanceName = "mssqllocaldb"
+	)
+
+	$allDatabases = Get-AllDatabases -InstanceName $InstanceName;
+
+	return $allDatabases.Contains($DatabaseName);
+}
+
 function Get-AllDatabases(){
+	[OutputType([String])]
 	[CmdletBinding()]
     param(
 		$InstanceName = "mssqllocaldb"

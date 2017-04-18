@@ -183,3 +183,21 @@ Describe "Get-AllDatabases"{
         $result | Should Not BeNullOrEmpty
     }
 }
+
+Describe "Test-Database"{
+    Mock Get-AllDatabases { return "Hello   master  Something"}
+
+    It "Returns True when database already exist"{
+        $result = Test-Database -DatabaseName "Hello"
+        $result | Should Be $true
+    }
+
+    It "Returns False when database already exist"{
+        $result = Test-Database -DatabaseName "MyDatabase"
+        $result | Should Be $false
+    }
+}
+
+# Describe "New-Database"{
+#     Mock Get-AllDatabases { return "Hello   master  Something"}
+# }
