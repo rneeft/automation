@@ -2,9 +2,9 @@
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path) -replace '\.Tests\.', '.'
 . "$here\$sut"
 
-Describe "Get-InstancePipeName"{
-    It "Always returns a pipe connection string" {
-        $result = Get-InstancePipeName
+Describe "Get-LocalDbConnectionString"{
+    It "Always returns a Connection String" {
+        $result = Get-LocalDbConnectionString
         $result | Should Not BeNullOrEmpty
     }
 }
@@ -177,27 +177,25 @@ Describe "Publish-DBUpScript-WithAccess" -Tags "LocalAccess" {
     }
 }
 
-Describe "Get-AllDatabases"{
-    It "Always returns a value"{
-        $result = Get-AllDatabases
-        $result | Should Not BeNullOrEmpty
-    }
-}
-
 Describe "Test-Database"{
-    Mock Get-AllDatabases { return "Hello   master  Something"}
+    Mock Invoke-LocalDbSqlcmd { return "Hello   master  Something"}
 
     It "Returns True when database already exist"{
-        $result = Test-Database -DatabaseName "Hello"
+        $result = Test-Database -DatabaseName "Hello" -ConnectionString "server"
         $result | Should Be $true
     }
 
     It "Returns False when database already exist"{
-        $result = Test-Database -DatabaseName "MyDatabase"
+        $result = Test-Database -DatabaseName "MyDatabase" -ConnectionString "server"
         $result | Should Be $false
     }
 }
 
-# Describe "New-Database"{
-#     Mock Get-AllDatabases { return "Hello   master  Something"}
-# }
+Describe "New-LocalDbDatabase"{
+    It "uses the LocalDbSqlCmd" {
+        Mock Invoke-LocalDbSqlcmd -ParameterFilter {$Command -eq "create database MyDb", $InstanceName -eq "mssqllocaldb"}
+        New-LocalDbDatabase -DatabaseName "MyDb"
+
+        Assert-VerifiableMocks
+    }
+}

@@ -1,10 +1,12 @@
-function New-Database {
+function New-LocalDbDatabase {
 		[CmdletBinding()]
     param(
+		[Parameter(Mandatory=$true)]
+		$DatabaseName,
 		$InstanceName = "mssqllocaldb"
 	)
 
-	$
+	Invoke-LocalDbSqlcmd -Command "create database $DatabaseName" -InstanceName $InstanceName
 }
 
 function Publish-DbUpScripts {
@@ -120,32 +122,56 @@ function Get-DbUp {
 }
 
 function Test-Database() {
+	<#
+	.SYNOPSIS
+	Determines whether the database exist.
+	.DESCRIPTION
+	The Test-Database function determines whether the specified database exist.
+	# .PARAMETER InstanceName
+	# The instance from which the connection string must be retrieved. Default: mssqllocaldb
+	# .OUTPUTS 
+	# System.string containing the connection string
+	# .EXAMPLE
+	# Get-LocalDbConnectionString
+	# Returns the connection string from the instance mssqllocaldb
+	# .EXAMPLE
+	# Get-LocalDbConnectionString -InstanceName "MyInstance"
+	# Returns the connection string from the instance MyInstance
+	# .LINK
+	# Questions about this script: rick@chroomsoft.nl
+	#>
 	[CmdletBinding()]
     param(
 		[Parameter(Mandatory=$true)]
-		$DatabaseName,
-		$InstanceName = "mssqllocaldb"
+		$ConnectionString,
+		[Parameter(Mandatory=$true)]
+		$DatabaseName
 	)
-
-	$allDatabases = Get-AllDatabases -InstanceName $InstanceName;
+	
+	$allDatabases = Invoke-LocalDbSqlcmd -Command "sp_databases" -ConnectionString $ConnectionString
 
 	return $allDatabases.Contains($DatabaseName);
 }
 
-function Get-AllDatabases(){
-	[OutputType([String])]
-	[CmdletBinding()]
-    param(
-		$InstanceName = "mssqllocaldb"
-	)
-	$connectionString = Get-InstancePipeName $InstanceName
-
-	$databases = sqlcmd -E -S $connectionString -Q "sp_databases" | Out-String
-
-	return $databases;
-}
-
-function Get-InstancePipeName() {
+function Get-LocalDbConnectionString() {
+	<#
+	.SYNOPSIS
+	Gets the connection string from of the LocalDB instance
+	.DESCRIPTION
+	The Get-LocalDbConnectionString returns the connection string to connect to a local Db instance. It defaults retrieves the connection string from the instance mssqllocaldb. If the instance is not running the function will starts the instance.
+	.PARAMETER InstanceName
+	The instance from which the connection string must be retrieved. Default: mssqllocaldb
+	.OUTPUTS 
+	System.string containing the connection string
+	.EXAMPLE
+	Get-LocalDbConnectionString
+	Returns the connection string from the instance mssqllocaldb
+	.EXAMPLE
+	Get-LocalDbConnectionString -InstanceName "MyInstance"
+	Returns the connection string from the instance MyInstance
+	.LINK
+	Questions about this script: rick@chroomsoft.nl
+	#>
 	[CmdletBinding()]
     param(
 		$InstanceName = "mssqllocaldb"
@@ -156,25 +182,22 @@ function Get-InstancePipeName() {
 	return (($instanceInfo).split(" ")[-1]).Trim()
 }
  
-
-function Write-Status{
-	[cmdletbinding()]
-	param (
+function Invoke-LocalDbSqlcmd{
+	[OutputType([String])]
+	[CmdletBinding()]
+    param(
 		[Parameter(Mandatory=$true)]
-		[Object]$message
+		$Command,
+		[Parameter(Mandatory=$true)]
+		$ConnectionString
 	)
-	Write-Host "$message... " -NoNewline
+
+	$databases = sqlcmd -E -S $ConnectionString -Q $Command | Out-String
+
+	return $database;
 }
 
-function Write-Succeed{
-	Write-Host "[Succeed]" -ForegroundColor Green
-}
-
-function Write-Fail{
-	Write-Host "[Fail]" -ForegroundColor Red
-}
-
-function Test-SQLConnectionString{    
+function Test-SQLConnectionString{
 	<#
 	.LINK
 	Source of this method: http://stackoverflow.com/questions/29229109/test-database-connectivity [Martin Brandl]
@@ -214,4 +237,21 @@ function Test-DbScriptsPath($location){
 
  	$items = Get-ChildItem -Path $location -Filter "*.sql" | Measure-Object
 	return !($items.Count -eq 0)
+}
+
+function Write-Status{
+	[cmdletbinding()]
+	param (
+		[Parameter(Mandatory=$true)]
+		[Object]$message
+	)
+	Write-Host "$message... " -NoNewline
+}
+
+function Write-Succeed{
+	Write-Host "[Succeed]" -ForegroundColor Green
+}
+
+function Write-Fail{
+	Write-Host "[Fail]" -ForegroundColor Red
 }
