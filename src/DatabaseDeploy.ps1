@@ -1,12 +1,28 @@
-function New-LocalDbDatabase {
-		[CmdletBinding()]
+function New-Database {
+	<#
+	.SYNOPSIS
+	Create a new database
+	.DESCRIPTION
+	Create a new Local DB database on the connectionString
+	.PARAMETER ConnectionString
+	SQL Connection String pointing to the master database
+	.PARAMETER DatabaseName
+	The name of the database to create
+	.EXAMPLE
+	New-LocalDbDatabase -DatabaseName "MyDb" -ConnectionString "servername='server'"
+	Creates the databse 'MyDb' on the specified connection string
+	.LINK
+	Questions about this script: rick@chroomsoft.nl
+	#>
+	[CmdletBinding()]
     param(
 		[Parameter(Mandatory=$true)]
 		$DatabaseName,
-		$InstanceName = "mssqllocaldb"
+		[Parameter(Mandatory=$true)]
+		$ConnectionString
 	)
 
-	Invoke-LocalDbSqlcmd -Command "create database $DatabaseName" -InstanceName $InstanceName
+	Invoke-LocalDbSqlcmd -Command "create database $DatabaseName" -ConnectionString $ConnectionString
 }
 
 function Publish-DbUpScripts {
@@ -127,19 +143,19 @@ function Test-Database() {
 	Determines whether the database exist.
 	.DESCRIPTION
 	The Test-Database function determines whether the specified database exist.
-	# .PARAMETER InstanceName
-	# The instance from which the connection string must be retrieved. Default: mssqllocaldb
-	# .OUTPUTS 
-	# System.string containing the connection string
-	# .EXAMPLE
-	# Get-LocalDbConnectionString
-	# Returns the connection string from the instance mssqllocaldb
-	# .EXAMPLE
-	# Get-LocalDbConnectionString -InstanceName "MyInstance"
-	# Returns the connection string from the instance MyInstance
-	# .LINK
-	# Questions about this script: rick@chroomsoft.nl
+	.PARAMETER ConnectionString
+	SQL Connection String pointing to the master database
+	.PARAMETER DatabaseName
+	The name of the database to check
+	.OUTPUTS 
+	System.Boolean, true when database exist otherwise false
+	.EXAMPLE
+	Test-Database -ConnectionString "servername='server'" -DatabaseName "MyDb"
+	Test whether the database MyDb exist
+	.LINK
+	Questions about this script: rick@chroomsoft.nl
 	#>
+	[OutputType([Boolean])]
 	[CmdletBinding()]
     param(
 		[Parameter(Mandatory=$true)]
@@ -172,6 +188,7 @@ function Get-LocalDbConnectionString() {
 	.LINK
 	Questions about this script: rick@chroomsoft.nl
 	#>
+	[OutputType([String])]
 	[CmdletBinding()]
     param(
 		$InstanceName = "mssqllocaldb"

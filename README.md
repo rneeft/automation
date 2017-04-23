@@ -38,3 +38,30 @@ C:\PS> Publish-DbUpScripts -ConnectionString "Server=(localdb)\\mssqllocaldb;Dat
 ```
 
 Publish the scripts in folder sql\ to the specified connection string.
+
+## New-Database
+The ```New-Database``` function lets you create a new database within the specified connection string.
+```powershell
+C:\PS> New-Database -ConncetionString "Server=(localdb)\\mssqllocaldb" -DatabaseName  "MyDatabase"
+```
+This will create a database named: 'MyDatabase'.
+
+## Test-Database
+This function lets you check whether the specified databse already exist. 
+```powershell
+C:\PS> $databaseExist = Test-Database -ConnectionString "Server=(localdb)\\mssqllocaldb" -DatabaseName  "MyDatabase"
+```
+Checks whether the 'MyDatabase' database already exist
+
+## Get-LocalDbConnectionString
+Retrieves the connection string for the localDB instance. When the instance is not started, it will be started automatically. 
+```powershell
+C:\PS> $connectionString = Get-LocalDbConnectionString
+```
+Returns the connection string of the default Local DB instance 'mssqllocaldb'.
+
+```powershell
+C:\PS> sqllocaldb create "MyTestInstance"
+C:\PS> $connectionString = Get-LocalDbConnectionString -InstanceName "MyTestInstance"
+```
+Returns the connection string of the just created local DB instance
