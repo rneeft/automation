@@ -1,19 +1,19 @@
+<#
+.SYNOPSIS
+Create a new database
+.DESCRIPTION
+Create a new Local DB database on the connectionString
+.PARAMETER ConnectionString
+SQL Connection String pointing to the master database
+.PARAMETER DatabaseName
+The name of the database to create
+.EXAMPLE
+New-LocalDbDatabase -DatabaseName "MyDb" -ConnectionString "servername='server'"
+Creates the databse 'MyDb' on the specified connection string
+.LINK
+Questions about this script: rick@chroomsoft.nl
+#>
 function New-Database {
-	<#
-	.SYNOPSIS
-	Create a new database
-	.DESCRIPTION
-	Create a new Local DB database on the connectionString
-	.PARAMETER ConnectionString
-	SQL Connection String pointing to the master database
-	.PARAMETER DatabaseName
-	The name of the database to create
-	.EXAMPLE
-	New-LocalDbDatabase -DatabaseName "MyDb" -ConnectionString "servername='server'"
-	Creates the databse 'MyDb' on the specified connection string
-	.LINK
-	Questions about this script: rick@chroomsoft.nl
-	#>
 	[CmdletBinding()]
     param(
 		[Parameter(Mandatory=$true)]
@@ -25,27 +25,27 @@ function New-Database {
 	Invoke-LocalDbSqlcmd -Command "create database $DatabaseName" -ConnectionString $ConnectionString
 }
 
+<#
+.SYNOPSIS
+Publish the scripts to the Database
+.DESCRIPTION
+Using DbUp to publish the scripts to database. DbUp keeps track of which scripts it needs to run.
+.PARAMETER ConnectionString
+SQL Connection String pointing to a existing database
+.PARAMETER DbUpPath
+Path pointing to the location of the DbUp.dll binary
+.PARAMETER DbScripts
+Path pointing oo the location of the SQL scripts. The folder must contain SQL scripts
+.EXAMPLE
+Publish-DbUpScripts -ConnectionString "Server=(localdb)\\mssqllocaldb;Database=Test" -DbUpPath "lib\dbup.dll" -DbScripts "\sql\"
+Publish the scripts in folder sql\ to the specified connection string.	
+.LINK
+DbUp docs: https://dbup.readthedocs.io/
+Questions about this script: rick@chroomsoft.nl
+.LINK
+Get-DbUp
+#>
 function Publish-DbUpScripts {
-	<#
-	.SYNOPSIS
-	Publish the scripts to the Database
-	.DESCRIPTION
-	Using DbUp to publish the scripts to database. DbUp keeps track of which scripts it needs to run.
-	.PARAMETER ConnectionString
-	SQL Connection String pointing to a existing database
-	.PARAMETER DbUpPath
-	Path pointing to the location of the DbUp.dll binary
-	.PARAMETER DbScripts
-	Path pointing oo the location of the SQL scripts. The folder must contain SQL scripts
-	.EXAMPLE
-	Publish-DbUpScripts -ConnectionString "Server=(localdb)\\mssqllocaldb;Database=Test" -DbUpPath "lib\dbup.dll" -DbScripts "\sql\"
-	Publish the scripts in folder sql\ to the specified connection string.	
-	.LINK
-	DbUp docs: https://dbup.readthedocs.io/
-	Questions about this script: rick@chroomsoft.nl
-	.LINK
-	Get-DbUp
-	#>
 	[CmdletBinding()]
 	param
 	(
@@ -77,26 +77,26 @@ function Publish-DbUpScripts {
 	Start-DbUp($dbUp);
 }
 
+<#
+.SYNOPSIS
+Downloads the DbUp binary
+.DESCRIPTION
+The Get-DbUp function downloads and extract a DbUp package specified URL. It is extracted to the local temp directory. The location of the DbUp.dll is returned. 
+.PARAMETER url
+URL that contains the location of the online DbUp zip/nupkg file. Default: https://www.nuget.org/api/v2/package/dbup/
+.OUTPUTS 
+System.string containing the location of the DbUp.dll binary
+.EXAMPLE
+Get-DbUp
+Downloads the package https://www.nuget.org/api/v2/package/dbup/ and returns the location of the DbUp.dll location
+.EXAMPLE
+Get-DbUp -URL https://custom.location.com/package/myDbUp/1.0.0
+Downloads the package from the custom location
+.LINK
+DbUp docs: https://dbup.readthedocs.io/
+Questions about this script: rick@chroomsoft.nl
+#>
 function Get-DbUp {
-	<#
-	.SYNOPSIS
-	Downloads the DbUp binary
-	.DESCRIPTION
-	The Get-DbUp function downloads and extract a DbUp package specified URL. It is extracted to the local temp directory. The location of the DbUp.dll is returned. 
-	.PARAMETER url
-	URL that contains the location of the online DbUp zip/nupkg file. Default: https://www.nuget.org/api/v2/package/dbup/
-	.OUTPUTS 
-	System.string containing the location of the DbUp.dll binary
-	.EXAMPLE
-	Get-DbUp
-	Downloads the package https://www.nuget.org/api/v2/package/dbup/ and returns the location of the DbUp.dll location
-	.EXAMPLE
-	Get-DbUp -URL https://custom.location.com/package/myDbUp/1.0.0
-	Downloads the package from the custom location
-	.LINK
-	DbUp docs: https://dbup.readthedocs.io/
-	Questions about this script: rick@chroomsoft.nl
-	#>
 	[CmdletBinding()]
 	param
 	(
@@ -137,24 +137,24 @@ function Get-DbUp {
 	}
 }
 
+<#
+.SYNOPSIS
+Determines whether the database exist.
+.DESCRIPTION
+The Test-Database function determines whether the specified database exist.
+.PARAMETER ConnectionString
+SQL Connection String pointing to the master database
+.PARAMETER DatabaseName
+The name of the database to check
+.OUTPUTS 
+System.Boolean, true when database exist otherwise false
+.EXAMPLE
+Test-Database -ConnectionString "servername='server'" -DatabaseName "MyDb"
+Test whether the database MyDb exist
+.LINK
+Questions about this script: rick@chroomsoft.nl
+#>
 function Test-Database() {
-	<#
-	.SYNOPSIS
-	Determines whether the database exist.
-	.DESCRIPTION
-	The Test-Database function determines whether the specified database exist.
-	.PARAMETER ConnectionString
-	SQL Connection String pointing to the master database
-	.PARAMETER DatabaseName
-	The name of the database to check
-	.OUTPUTS 
-	System.Boolean, true when database exist otherwise false
-	.EXAMPLE
-	Test-Database -ConnectionString "servername='server'" -DatabaseName "MyDb"
-	Test whether the database MyDb exist
-	.LINK
-	Questions about this script: rick@chroomsoft.nl
-	#>
 	[OutputType([Boolean])]
 	[CmdletBinding()]
     param(
@@ -169,25 +169,25 @@ function Test-Database() {
 	return $allDatabases.Contains($DatabaseName);
 }
 
+<#
+.SYNOPSIS
+Gets the connection string from of the LocalDB instance
+.DESCRIPTION
+The Get-LocalDbConnectionString returns the connection string to connect to a local Db instance. It defaults retrieves the connection string from the instance mssqllocaldb. If the instance is not running the function will starts the instance.
+.PARAMETER InstanceName
+The instance from which the connection string must be retrieved. Default: mssqllocaldb
+.OUTPUTS 
+System.string containing the connection string
+.EXAMPLE
+Get-LocalDbConnectionString
+Returns the connection string from the instance mssqllocaldb
+.EXAMPLE
+Get-LocalDbConnectionString -InstanceName "MyInstance"
+Returns the connection string from the instance MyInstance
+.LINK
+Questions about this script: rick@chroomsoft.nl
+#>
 function Get-LocalDbConnectionString() {
-	<#
-	.SYNOPSIS
-	Gets the connection string from of the LocalDB instance
-	.DESCRIPTION
-	The Get-LocalDbConnectionString returns the connection string to connect to a local Db instance. It defaults retrieves the connection string from the instance mssqllocaldb. If the instance is not running the function will starts the instance.
-	.PARAMETER InstanceName
-	The instance from which the connection string must be retrieved. Default: mssqllocaldb
-	.OUTPUTS 
-	System.string containing the connection string
-	.EXAMPLE
-	Get-LocalDbConnectionString
-	Returns the connection string from the instance mssqllocaldb
-	.EXAMPLE
-	Get-LocalDbConnectionString -InstanceName "MyInstance"
-	Returns the connection string from the instance MyInstance
-	.LINK
-	Questions about this script: rick@chroomsoft.nl
-	#>
 	[OutputType([String])]
 	[CmdletBinding()]
     param(
