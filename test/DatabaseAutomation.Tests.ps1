@@ -157,7 +157,7 @@ Describe "Publish-DbUpScripts"{
 Describe "Publish-DBUpScript-WithAccess" -Tags "LocalAccess" {
 
     Context "Correct parameters" {
-        $dbUp = "$PSScriptRoot\DbUp.dll"
+        $dbUp = "$PSScriptRoot\..\src\DbUp.dll"
         $connectionString = "Server=(localdb)\\mssqllocaldb;Database=Pester"
         $dbScripts = "db"
 
