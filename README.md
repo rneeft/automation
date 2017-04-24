@@ -8,7 +8,7 @@ Provide scripts for (deployment) automation. It uses [DbUp](http://dbup.github.i
 # Usage & Examples
 Loading the functions
 ```powershell
-C:\PS>. .\DatabaseDeploy.ps1
+C:\PS>. .\DatabaseAutomation.ps1
 ```
 The main functions are fully documented
 
