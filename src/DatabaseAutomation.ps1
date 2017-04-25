@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 0.0.1
+.VERSION _%Version%_
 
 .GUID ba5ca826-35c3-4894-bd56-9704de51f933
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Chroomsoft
 
-.COPYRIGHT 
+.COPYRIGHT -
 
 .TAGS Database Deploy Automation Deployment DbUp
 
@@ -16,15 +16,15 @@
 
 .PROJECTURI https://github.com/rneeft/automation
 
-.ICONURI 
+.ICONURI https://github.com/rneeft/automation
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES -
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS -
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES -
 
-.RELEASENOTES
+.RELEASENOTES -
 
 
 #> 
