@@ -191,7 +191,7 @@ Describe "Test-Database"{
     }
 }
 
-Describe "New-Database"{
+Describe "New-Database" -Tags "LocalAccess" {
     It "uses the LocalDbSqlCmd" {
         $connectionString = Get-LocalDbConnectionString
         
