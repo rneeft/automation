@@ -195,7 +195,7 @@ Describe "New-Database"{
     It "uses the LocalDbSqlCmd" {
         $connectionString = Get-LocalDbConnectionString
         
-        Mock Invoke-LocalDbSqlcmd -ParameterFilter {$Command -eq "create database MyDb", $ConnectionString -eq $connectionString}
+        Mock Invoke-LocalDbSqlcmd {} -ParameterFilter {$Command -eq "create database MyDb", $ConnectionString -eq $connectionString}
         New-Database -DatabaseName "MyTestDb" -ConnectionString $connectionString
 
         Assert-VerifiableMocks
