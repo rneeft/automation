@@ -8,7 +8,7 @@
 
 .COMPANYNAME Chroomsoft
 
-.COPYRIGHT -
+.COPYRIGHT Chroomsoft
 
 .TAGS Database Deploy Automation Deployment DbUp
 
@@ -26,6 +26,7 @@
 
 .RELEASENOTES -
 
+.REQUIREDMODULES  
 
 #> 
 
@@ -34,11 +35,7 @@
 <# 
 
 .DESCRIPTION 
-Get-DbUp
-Publish-DbUpScripts
-New-Database
-Test-Database
-Get-Local 
+Provide scripts for (deployment) automation. It uses DbUp to publish the database scripts.
 
 #> 
 
