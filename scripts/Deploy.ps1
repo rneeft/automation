@@ -5,6 +5,19 @@ param(
     $NugetUrl = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
 )
 
+function Write-Succeed{
+	Write-Host "[Succeed]" -ForegroundColor Green
+}
+
+function Write-Status{
+	[cmdletbinding()]
+	param (
+		[Parameter(Mandatory=$true)]
+		[Object]$message
+	)
+	Write-Host "$message... " -NoNewline
+}
+
 $nuGetProvider = Find-PackageProvider -Name "NuGet" -MinimumVersion $NuGetVersion
 if ($nuGetProvider.Count > 0){
     Write-Verbose "Package Available."
@@ -23,16 +36,3 @@ Write-Succeed
 Write-Status "Publishing module: 'DatabaseAutomation'"
 Publish-Module -Path DatabaseAutomation.psm1 -NuGetApiKey $ApiKey
 Write-Succeed
-
-function Write-Succeed{
-	Write-Host "[Succeed]" -ForegroundColor Green
-}
-
-function Write-Status{
-	[cmdletbinding()]
-	param (
-		[Parameter(Mandatory=$true)]
-		[Object]$message
-	)
-	Write-Host "$message... " -NoNewline
-}
