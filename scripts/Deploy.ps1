@@ -33,6 +33,10 @@ Invoke-WebRequest $NugetUrl -OutFile "$PSScriptRoot\Nuget.exe"
 $env:Path += ";$PSScriptRoot"
 Write-Succeed
 
-Write-Status "Publishing module: 'DatabaseAutomation'"
-Publish-Module -Path DatabaseAutomation.psm1 -NuGetApiKey $ApiKey
-Write-Succeed
+$modules = Get-ChildItem *.psm1
+Write-Host "Found '$module.Count' Module(s) to publish"
+foreach ($module in $modules) {
+    Write-Status "Publishing module: '$module.Name'"
+    Publish-Module -Path $module -NuGetApiKey $ApiKey
+    Write-Succeed
+}
