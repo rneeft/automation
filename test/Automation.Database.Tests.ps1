@@ -1,4 +1,4 @@
-﻿Import-Module -Name $PSScriptRoot+'\..\src\DatabaseAutomation.psm1'
+﻿Import-Module -Name $PSScriptRoot+'\..\src\Automation.Database.psm1'
 
 InModuleScope DatabaseAutomation {
 
