@@ -6,14 +6,13 @@ Provide scripts for (deployment) automation. It uses [DbUp](http://dbup.github.i
 
 
 # Usage & Examples
-Loading the functions
+The script can be found in the [PowerShell Gallery](https://www.powershellgallery.com/packages/DatabaseAutomation/1.0.49/DisplayScript). To install the script use the following instruction:
 ```powershell
-C:\PS>. .\DatabaseAutomation.ps1
+C:\PS> Install-Script -Name DatabaseAutomation 
 ```
-The main functions are fully documented
-
+Or use the following instruction which does not require administrative privileges
 ```powershell
-C:\PS> get-help Get-DbUp
+C:\PS> Install-Script -Name DatabaseAutomation -Scope CurrentUser -Force
 ```
 
 ## Get-DbUp
