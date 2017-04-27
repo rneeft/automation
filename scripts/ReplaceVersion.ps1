@@ -5,7 +5,7 @@ param(
 
 Write-Verbose "Version is: $Version"
 
-$files = Get-ChildItem *.ps1
+$files = Get-ChildItem *.psm1
 foreach ($file in $files) {
     Write-Verbose "Writing version to file: $file"
     

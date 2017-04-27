@@ -1,42 +1,22 @@
 <#PSScriptInfo
-
 .VERSION 0.0.0
-
 .GUID ba5ca826-35c3-4894-bd56-9704de51f933
-
 .AUTHOR Rick Neeft
-
 .COMPANYNAME Chroomsoft
-
 .COPYRIGHT
-
 .TAGS Database Deploy Automation Deployment DbUp
-
 .LICENSEURI https://github.com/rneeft/automation/blob/master/LICENSE
-
 .PROJECTURI https://github.com/rneeft/automation
-
 .ICONURI https://github.com/rneeft/automation
-
 .EXTERNALMODULEDEPENDENCIES
-
 .REQUIREDSCRIPTS
-
 .EXTERNALSCRIPTDEPENDENCIES
-
 .RELEASENOTES
-
 #> 
-
-
-
 <# 
-
 .DESCRIPTION 
 Provide scripts for (deployment) automation. It uses DbUp to publish the database scripts.
-
 #> 
-
 <#
 .SYNOPSIS
 Create a new database
@@ -202,7 +182,7 @@ function Test-Database() {
 		[Parameter(Mandatory=$true)]
 		$DatabaseName
 	)
-	
+
 	$allDatabases = Invoke-LocalDbSqlcmd -Command "sp_databases" -ConnectionString $ConnectionString
 
 	return $allDatabases.Contains($DatabaseName);
@@ -237,7 +217,7 @@ function Get-LocalDbConnectionString() {
 	$instanceInfo = sqllocaldb info $InstanceName | Out-String
 	return (($instanceInfo).split(" ")[-1]).Trim()
 }
- 
+
 function Invoke-LocalDbSqlcmd{
 	[OutputType([String])]
 	[CmdletBinding()]
@@ -311,3 +291,8 @@ function Write-Succeed{
 function Write-Fail{
 	Write-Host "[Fail]" -ForegroundColor Red
 }
+Export-ModuleMember -Function New-Database
+Export-ModuleMember -Function Publish-DbUpScripts
+Export-ModuleMember -Function Get-DbUp
+Export-ModuleMember -Function Test-Database
+Export-ModuleMember -Function Get-LocalDbConnectionString

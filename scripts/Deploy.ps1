@@ -20,4 +20,4 @@ Invoke-WebRequest $NugetUrl -OutFile "$PSScriptRoot\Nuget.exe"
 $env:Path += ";$PSScriptRoot"
 Write-Host "[OK]"
 
-Publish-Script -Path DatabaseAutomation.ps1 -NuGetApiKey $ApiKey
+Publish-Module -Path DatabaseAutomation.ps1 -NuGetApiKey $ApiKey

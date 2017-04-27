@@ -14,7 +14,7 @@ Or use the following instruction which does not require administrative privilege
 ```powershell
 C:\PS> Install-Script -Name DatabaseAutomation -Scope CurrentUser -Force
 ```
-
+ 
 ## Get-DbUp
 The Get-DbUp function downloads and extract a DbUp package specified URL. It is extracted to the local temp directory. The location of the DbUp.dll is returned. 
 
