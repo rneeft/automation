@@ -10,14 +10,29 @@ if ($nuGetProvider.Count > 0){
     Write-Verbose "Package Available."
 } else {
     Write-Verbose "Package not available."
-    Write-Host "Installing PackageProvider 'NuGet'..." -NoNewline
+    Write-Status "Installing PackageProvider 'NuGet'"
     Install-PackageProvider -Name "NuGet" -MinimumVersion $NuGetVersion -Scope CurrentUser -Force
-    Write-Host "[OK]"
+    Write-Succeed
 }
 
-Write-Host "Downloading NuGet..." -NoNewline
+Write-Status "Downloading NuGet"
 Invoke-WebRequest $NugetUrl -OutFile "$PSScriptRoot\Nuget.exe"
 $env:Path += ";$PSScriptRoot"
-Write-Host "[OK]"
+Write-Succeed
 
-Publish-Module -Path DatabaseAutomation.ps1 -NuGetApiKey $ApiKey
+Write-Status "Publishing module: 'DatabaseAutomation'"
+Publish-Module -Path DatabaseAutomation.psm1 -NuGetApiKey $ApiKey
+Write-Succeed
+
+function Write-Succeed{
+	Write-Host "[Succeed]" -ForegroundColor Green
+}
+
+function Write-Status{
+	[cmdletbinding()]
+	param (
+		[Parameter(Mandatory=$true)]
+		[Object]$message
+	)
+	Write-Host "$message... " -NoNewline
+}
