@@ -34,9 +34,10 @@ $env:Path += ";$PSScriptRoot"
 Write-Succeed
 
 $modules = Get-ChildItem *.psm1
-Write-Host "Found '$module.Count' Module(s) to publish"
+Write-Host "Found '$modules.Count' Module(s) to publish"
 foreach ($module in $modules) {
-    Write-Status "Publishing module: '$module.Name'"
+    $name = $module.Name
+    Write-Status "Publishing module: '$name'"
     Publish-Module -Name $module -NuGetApiKey $ApiKey
     Write-Succeed
 }
