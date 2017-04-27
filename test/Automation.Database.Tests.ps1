@@ -1,6 +1,6 @@
 ﻿Import-Module -Name $PSScriptRoot+'\..\src\Automation.Database.psm1'
 
-InModuleScope DatabaseAutomation {
+InModuleScope Automation.Database {
 
     Describe "Get-LocalDbConnectionString"{
         It "Always returns a Connection String" {
