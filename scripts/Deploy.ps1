@@ -37,6 +37,6 @@ $modules = Get-ChildItem *.psm1
 Write-Host "Found '$module.Count' Module(s) to publish"
 foreach ($module in $modules) {
     Write-Status "Publishing module: '$module.Name'"
-    Publish-Module -Path $module -NuGetApiKey $ApiKey
+    Publish-Module -Name $module -NuGetApiKey $ApiKey
     Write-Succeed
 }
