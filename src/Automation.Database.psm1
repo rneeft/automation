@@ -70,7 +70,7 @@ function Publish-DbUpScripts {
 
 	$dbUp = [DbUp.DeployChanges]::To
 	$dbUp = [SqlServerExtensions]::SqlDatabase($dbUp, $ConnectionString)
-	$dbUp = [StandardExtensions]::WithScriptsFromFileSystem($dbUp, $scriptPath)
+ 	$dbUp = [StandardExtensions]::WithScriptsFromFileSystem($dbUp, $scriptPath)
 	$dbUp = [SqlServerExtensions]::JournalToSqlTable($dbUp, 'dbo', 'SchemaVersions')
 	$dbUp = [StandardExtensions]::LogToConsole($dbUp)
 
@@ -117,7 +117,7 @@ function Get-DbUp {
 		Write-Succeed
 		
 		Write-Status "Expand archive... " 
-		Expand-Archive $dbUpZipLocation -DestinationPath $dbUpTempPath
+		Expand-Archive $dbUpZipLocation -DestinationPath $dbUpTempPath -Force
 		Write-Succeed
 
 		Write-Status "Locating DbUp... "
