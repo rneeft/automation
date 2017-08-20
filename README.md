@@ -41,7 +41,8 @@ Publish the scripts in folder sql\ to the specified connection string.
 ## New-Database
 The ```New-Database``` function lets you create a new database within the specified connection string.
 ```powershell
-C:\PS> New-Database -ConncetionString "Server=(localdb)\\mssqllocaldb" -DatabaseName  "MyDatabase"
+C:\PS> $connectionString = "Server=(localdb)\\mssqllocaldb"
+C:\PS> New-Database -ConnectionString $connectionString -DatabaseName "MyDatabase"
 ```
 This will create a database named: 'MyDatabase'.
 
