@@ -70,7 +70,7 @@ function Publish-DbUpScripts {
 
 	$dbUp = [DbUp.DeployChanges]::To
 	$dbUp = [SqlServerExtensions]::SqlDatabase($dbUp, $ConnectionString)
- 	$dbUp = [StandardExtensions]::WithScriptsFromFileSystem($dbUp, $scriptPath)
+ 	$dbUp = [StandardExtensions]::WithScriptsFromFileSystem($dbUp, $DbScripts)
 	$dbUp = [SqlServerExtensions]::JournalToSqlTable($dbUp, 'dbo', 'SchemaVersions')
 	$dbUp = [StandardExtensions]::LogToConsole($dbUp)
 
